@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 정보</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+            background: #f4f6f9;
+            color: #222;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 48px 16px;
+        }
+
+        .info-box {
+            width: 100%;
+            max-width: 480px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 40px 32px;
+        }
+
+        h1 {
+            font-size: 26px;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding-bottom: 24px;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #eef3ff;
+            color: #3b6ef5;
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .profile-name {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .profile-id {
+            font-size: 14px;
+            color: #777;
+            margin-top: 2px;
+        }
+
+        .info-list {
+            list-style: none;
+        }
+
+        .info-list li {
+            display: flex;
+            padding: 14px 0;
+            border-bottom: 1px solid #f1f1f1;
+            font-size: 15px;
+        }
+
+        .info-list .label {
+            width: 110px;
+            flex-shrink: 0;
+            color: #777;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .info-list .value {
+            flex: 1;
+            word-break: break-all;
+        }
+
+        .info-list .value.empty {
+            color: #aaa;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 28px;
+        }
+
+        .btn {
+            flex: 1;
+            height: 50px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            line-height: 50px;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .btn-primary {
+            border: none;
+            background: #3b6ef5;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #2f5bd0;
+        }
+
+        .btn-outline {
+            border: 1px solid #3b6ef5;
+            background: #fff;
+            color: #3b6ef5;
+        }
+
+        .btn-outline:hover {
+            background: #eef3ff;
+        }
+
+        .withdraw {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .withdraw a {
+            font-size: 13px;
+            color: #999;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="info-box">
+        <h1>내 정보</h1>
+        <p class="subtitle">회원님의 가입 정보입니다.</p>
+
+        <div class="profile">
+            <div class="avatar" id="avatar"></div>
+            <div>
+                <p class="profile-name" id="profileName"></p>
+                <p class="profile-id" id="profileId"></p>
+            </div>
+        </div>
+
+        <ul class="info-list">
+            <li><span class="label">아이디</span><span class="value" data-field="login_id"></span></li>
+            <li><span class="label">이름</span><span class="value" data-field="name"></span></li>
+            <li><span class="label">이메일</span><span class="value" data-field="email"></span></li>
+            <li><span class="label">휴대폰 번호</span><span class="value" data-field="phone"></span></li>
+            <li><span class="label">생년월일</span><span class="value" data-field="birth_date"></span></li>
+            <li><span class="label">주소</span><span class="value" data-field="address"></span></li>
+            <li><span class="label">가입일</span><span class="value" data-field="created_at"></span></li>
+            <li><span class="label">최근 수정일</span><span class="value" data-field="updated_at"></span></li>
+        </ul>
+
+        <div class="btn-group">
+            <a href="member_edit.html" class="btn btn-primary">정보 수정</a>
+            <a href="password_change.html" class="btn btn-outline">비밀번호 변경</a>
+        </div>
+
+        <p class="withdraw"><a href="#" id="withdrawLink">회원 탈퇴</a></p>
+    </div>
+
+    <script>
+        // TODO: 서버 연동 시 API 응답으로 교체 (member.sql 2번 SELECT 결과)
+        const member = {
+            member_id: 1,
+            login_id: 'hong123',
+            name: '홍길동',
+            email: 'hong@example.com',
+            phone: '010-1234-5678',
+            birth_date: '1995-03-15',
+            address: '서울특별시 강남구 테헤란로 1',
+            created_at: '2026-10-13 14:20:00',
+            updated_at: '2026-10-13 14:20:00'
+        };
+
+        function formatDate(value) {
+            if (!value) return '';
+            const [date] = value.split(' ');
+            const [y, m, d] = date.split('-');
+            return `${y}년 ${Number(m)}월 ${Number(d)}일`;
+        }
+
+        function render(data) {
+            document.getElementById('avatar').textContent = data.name.charAt(0);
+            document.getElementById('profileName').textContent = data.name + ' 님';
+            document.getElementById('profileId').textContent = '@' + data.login_id;
+
+            document.querySelectorAll('[data-field]').forEach((el) => {
+                const key = el.dataset.field;
+                let value = data[key];
+                if (['birth_date', 'created_at', 'updated_at'].includes(key)) {
+                    value = formatDate(value);
+                }
+                el.textContent = value || '미입력';
+                el.classList.toggle('empty', !value);
+            });
+        }
+
+        render(member);
+
+        // 회원 탈퇴 (member.sql 5번)
+        document.getElementById('withdrawLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            if (!confirm('정말 탈퇴하시겠습니까?\n탈퇴 후에는 계정을 복구할 수 없습니다.')) return;
+            // TODO: 비밀번호 확인 후 서버 탈퇴 API 호출
+            alert('회원 탈퇴가 완료되었습니다.');
+        });
+    </script>
+</body>
+</html>
