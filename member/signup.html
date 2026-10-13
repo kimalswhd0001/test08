@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+            background: #f4f6f9;
+            color: #222;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 48px 16px;
+        }
+
+        .signup-box {
+            width: 100%;
+            max-width: 480px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 40px 32px;
+        }
+
+        h1 {
+            font-size: 26px;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        label .required {
+            color: #e5484d;
+            margin-left: 2px;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        input {
+            width: 100%;
+            height: 44px;
+            padding: 0 12px;
+            border: 1px solid #d0d5dd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #3b6ef5;
+        }
+
+        input.invalid {
+            border-color: #e5484d;
+        }
+
+        .btn-sub {
+            flex-shrink: 0;
+            height: 44px;
+            padding: 0 14px;
+            border: 1px solid #3b6ef5;
+            border-radius: 8px;
+            background: #fff;
+            color: #3b6ef5;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-sub:hover {
+            background: #eef3ff;
+        }
+
+        .message {
+            font-size: 12px;
+            margin-top: 6px;
+            min-height: 16px;
+        }
+
+        .message.error {
+            color: #e5484d;
+        }
+
+        .message.success {
+            color: #12a150;
+        }
+
+        .hint {
+            font-size: 12px;
+            color: #888;
+            margin-top: 6px;
+        }
+
+        .agree {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            margin: 24px 0 8px;
+        }
+
+        .agree input {
+            width: 18px;
+            height: 18px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            height: 50px;
+            margin-top: 16px;
+            border: none;
+            border-radius: 8px;
+            background: #3b6ef5;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: #2f5bd0;
+        }
+
+        .footer-link {
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+            margin-top: 20px;
+        }
+
+        .footer-link a {
+            color: #3b6ef5;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-box">
+        <h1>회원가입</h1>
+        <p class="subtitle">서비스 이용을 위해 정보를 입력해 주세요.</p>
+
+        <!-- 컬럼명은 member 테이블과 동일하게 맞춤 -->
+        <form id="signupForm" action="/member/signup" method="post" novalidate>
+            <!-- 아이디 -->
+            <div class="form-group">
+                <label for="login_id">아이디<span class="required">*</span></label>
+                <div class="input-row">
+                    <input type="text" id="login_id" name="login_id" maxlength="50" placeholder="영문 소문자, 숫자 4~20자">
+                    <button type="button" class="btn-sub" id="checkIdBtn">중복확인</button>
+                </div>
+                <p class="message" id="login_id_msg"></p>
+            </div>
+
+            <!-- 비밀번호 -->
+            <div class="form-group">
+                <label for="password">비밀번호<span class="required">*</span></label>
+                <input type="password" id="password" name="password" maxlength="20" placeholder="영문, 숫자, 특수문자 포함 8~20자">
+                <p class="message" id="password_msg"></p>
+            </div>
+
+            <!-- 비밀번호 확인 (DB 저장 X) -->
+            <div class="form-group">
+                <label for="password_confirm">비밀번호 확인<span class="required">*</span></label>
+                <input type="password" id="password_confirm" maxlength="20" placeholder="비밀번호를 한 번 더 입력">
+                <p class="message" id="password_confirm_msg"></p>
+            </div>
+
+            <!-- 이름 -->
+            <div class="form-group">
+                <label for="name">이름<span class="required">*</span></label>
+                <input type="text" id="name" name="name" maxlength="50" placeholder="홍길동">
+                <p class="message" id="name_msg"></p>
+            </div>
+
+            <!-- 이메일 -->
+            <div class="form-group">
+                <label for="email">이메일<span class="required">*</span></label>
+                <input type="email" id="email" name="email" maxlength="100" placeholder="example@email.com">
+                <p class="message" id="email_msg"></p>
+            </div>
+
+            <!-- 휴대폰 번호 -->
+            <div class="form-group">
+                <label for="phone">휴대폰 번호</label>
+                <input type="tel" id="phone" name="phone" maxlength="13" placeholder="010-1234-5678">
+                <p class="message" id="phone_msg"></p>
+            </div>
+
+            <!-- 생년월일 -->
+            <div class="form-group">
+                <label for="birth_date">생년월일</label>
+                <input type="date" id="birth_date" name="birth_date">
+                <p class="message" id="birth_date_msg"></p>
+            </div>
+
+            <!-- 주소 -->
+            <div class="form-group">
+                <label for="address">주소</label>
+                <input type="text" id="address" name="address" maxlength="255" placeholder="서울특별시 강남구 테헤란로 1">
+            </div>
+
+            <!-- 약관 동의 -->
+            <label class="agree">
+                <input type="checkbox" id="agree">
+                (필수) 이용약관 및 개인정보 처리방침에 동의합니다.
+            </label>
+            <p class="message" id="agree_msg"></p>
+
+            <button type="submit" class="btn-submit">가입하기</button>
+        </form>
+
+        <p class="footer-link">이미 회원이신가요? <a href="login.html">로그인</a></p>
+    </div>
+
+    <script>
+        const form = document.getElementById('signupForm');
+        const $ = (id) => document.getElementById(id);
+
+        // 아이디 중복확인 여부 (아이디를 바꾸면 다시 확인해야 함)
+        let idChecked = false;
+
+        const rules = {
+            login_id: /^[a-z0-9]{4,20}$/,
+            password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,20}$/,
+            name: /^[가-힣a-zA-Z\s]{2,50}$/,
+            email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            phone: /^01[016789]-\d{3,4}-\d{4}$/
+        };
+
+        function setMessage(id, text, type) {
+            const input = $(id);
+            const msg = $(id + '_msg');
+            msg.textContent = text;
+            msg.className = 'message' + (type ? ' ' + type : '');
+            if (input && input.type !== 'checkbox') {
+                input.classList.toggle('invalid', type === 'error');
+            }
+        }
+
+        function validateLoginId() {
+            const value = $('login_id').value.trim();
+            if (!value) return setMessage('login_id', '아이디를 입력해 주세요.', 'error'), false;
+            if (!rules.login_id.test(value)) return setMessage('login_id', '영문 소문자, 숫자 4~20자로 입력해 주세요.', 'error'), false;
+            if (!idChecked) return setMessage('login_id', '아이디 중복확인을 해주세요.', 'error'), false;
+            return true;
+        }
+
+        function validatePassword() {
+            const value = $('password').value;
+            if (!value) return setMessage('password', '비밀번호를 입력해 주세요.', 'error'), false;
+            if (!rules.password.test(value)) return setMessage('password', '영문, 숫자, 특수문자를 포함해 8~20자로 입력해 주세요.', 'error'), false;
+            setMessage('password', '사용 가능한 비밀번호입니다.', 'success');
+            return true;
+        }
+
+        function validatePasswordConfirm() {
+            const value = $('password_confirm').value;
+            if (!value) return setMessage('password_confirm', '비밀번호 확인을 입력해 주세요.', 'error'), false;
+            if (value !== $('password').value) return setMessage('password_confirm', '비밀번호가 일치하지 않습니다.', 'error'), false;
+            setMessage('password_confirm', '비밀번호가 일치합니다.', 'success');
+            return true;
+        }
+
+        function validateName() {
+            const value = $('name').value.trim();
+            if (!value) return setMessage('name', '이름을 입력해 주세요.', 'error'), false;
+            if (!rules.name.test(value)) return setMessage('name', '한글 또는 영문 2자 이상 입력해 주세요.', 'error'), false;
+            setMessage('name', '', '');
+            return true;
+        }
+
+        function validateEmail() {
+            const value = $('email').value.trim();
+            if (!value) return setMessage('email', '이메일을 입력해 주세요.', 'error'), false;
+            if (!rules.email.test(value)) return setMessage('email', '올바른 이메일 형식이 아닙니다.', 'error'), false;
+            setMessage('email', '', '');
+            return true;
+        }
+
+        function validatePhone() {
+            const value = $('phone').value.trim();
+            if (value && !rules.phone.test(value)) return setMessage('phone', '010-1234-5678 형식으로 입력해 주세요.', 'error'), false;
+            setMessage('phone', '', '');
+            return true;
+        }
+
+        function validateBirthDate() {
+            const value = $('birth_date').value;
+            if (value && new Date(value) > new Date()) return setMessage('birth_date', '생년월일은 오늘 이전 날짜여야 합니다.', 'error'), false;
+            setMessage('birth_date', '', '');
+            return true;
+        }
+
+        function validateAgree() {
+            if (!$('agree').checked) return setMessage('agree', '약관에 동의해 주세요.', 'error'), false;
+            setMessage('agree', '', '');
+            return true;
+        }
+
+        // 아이디 중복확인 (서버 연동 전 임시 처리: 샘플 데이터 아이디와 비교)
+        $('checkIdBtn').addEventListener('click', () => {
+            const value = $('login_id').value.trim();
+            idChecked = false;
+            if (!rules.login_id.test(value)) {
+                return setMessage('login_id', '영문 소문자, 숫자 4~20자로 입력해 주세요.', 'error');
+            }
+            // TODO: 서버 API 연동 (예: GET /member/check-id?login_id=...)
+            const existingIds = ['hong123', 'kim456', 'lee789'];
+            if (existingIds.includes(value)) {
+                setMessage('login_id', '이미 사용 중인 아이디입니다.', 'error');
+            } else {
+                idChecked = true;
+                setMessage('login_id', '사용 가능한 아이디입니다.', 'success');
+            }
+        });
+
+        // 휴대폰 번호 자동 하이픈
+        $('phone').addEventListener('input', (e) => {
+            const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
+            e.target.value = digits.length < 4 ? digits
+                : digits.length < 8 ? `${digits.slice(0, 3)}-${digits.slice(3)}`
+                : `${digits.slice(0, 3)}-${digits.slice(3, digits.length - 4)}-${digits.slice(-4)}`;
+        });
+
+        // 실시간 검사
+        $('login_id').addEventListener('input', () => {
+            idChecked = false;
+            setMessage('login_id', '', '');
+        });
+        $('password').addEventListener('blur', validatePassword);
+        $('password').addEventListener('input', () => {
+            if ($('password_confirm').value) validatePasswordConfirm();
+        });
+        $('password_confirm').addEventListener('input', validatePasswordConfirm);
+        $('name').addEventListener('blur', validateName);
+        $('email').addEventListener('blur', validateEmail);
+        $('phone').addEventListener('blur', validatePhone);
+        $('birth_date').addEventListener('change', validateBirthDate);
+        $('agree').addEventListener('change', validateAgree);
+
+        // 제출
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const results = [
+                validateLoginId(),
+                validatePassword(),
+                validatePasswordConfirm(),
+                validateName(),
+                validateEmail(),
+                validatePhone(),
+                validateBirthDate(),
+                validateAgree()
+            ];
+
+            if (results.every(Boolean)) {
+                // TODO: 서버 연동 시 form.submit() 으로 변경
+                alert('회원가입이 완료되었습니다.');
+                form.reset();
+                idChecked = false;
+                document.querySelectorAll('.message').forEach((m) => (m.textContent = ''));
+            } else {
+                const firstError = form.querySelector('.invalid');
+                if (firstError) firstError.focus();
+            }
+        });
+    </script>
+</body>
+</html>
