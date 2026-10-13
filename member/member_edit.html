@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 정보 수정</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+            background: #f4f6f9;
+            color: #222;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 48px 16px;
+        }
+
+        .edit-box {
+            width: 100%;
+            max-width: 480px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 40px 32px;
+        }
+
+        h1 {
+            font-size: 26px;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        label .required {
+            color: #e5484d;
+            margin-left: 2px;
+        }
+
+        input {
+            width: 100%;
+            height: 44px;
+            padding: 0 12px;
+            border: 1px solid #d0d5dd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #3b6ef5;
+        }
+
+        input[readonly] {
+            background: #f4f5f7;
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        input.invalid {
+            border-color: #e5484d;
+        }
+
+        .message {
+            font-size: 12px;
+            margin-top: 6px;
+            min-height: 16px;
+        }
+
+        .message.error {
+            color: #e5484d;
+        }
+
+        .hint {
+            font-size: 12px;
+            color: #888;
+            margin-top: 6px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 24px;
+        }
+
+        .btn {
+            flex: 1;
+            height: 50px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            line-height: 50px;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .btn-primary {
+            border: none;
+            background: #3b6ef5;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #2f5bd0;
+        }
+
+        .btn-outline {
+            border: 1px solid #d0d5dd;
+            background: #fff;
+            color: #555;
+        }
+
+        .btn-outline:hover {
+            background: #f4f5f7;
+        }
+    </style>
+</head>
+<body>
+    <div class="edit-box">
+        <h1>내 정보 수정</h1>
+        <p class="subtitle">변경할 정보를 입력한 뒤 저장해 주세요.</p>
+
+        <!-- member.sql 3번 UPDATE : name, email, phone, address 수정 -->
+        <form id="editForm" action="/member/update" method="post" novalidate>
+            <!-- 아이디 (수정 불가) -->
+            <div class="form-group">
+                <label for="login_id">아이디</label>
+                <input type="text" id="login_id" name="login_id" readonly>
+                <p class="hint">아이디는 변경할 수 없습니다.</p>
+            </div>
+
+            <!-- 생년월일 (수정 불가) -->
+            <div class="form-group">
+                <label for="birth_date">생년월일</label>
+                <input type="date" id="birth_date" readonly>
+                <p class="hint">생년월일은 변경할 수 없습니다.</p>
+            </div>
+
+            <!-- 이름 -->
+            <div class="form-group">
+                <label for="name">이름<span class="required">*</span></label>
+                <input type="text" id="name" name="name" maxlength="50">
+                <p class="message" id="name_msg"></p>
+            </div>
+
+            <!-- 이메일 -->
+            <div class="form-group">
+                <label for="email">이메일<span class="required">*</span></label>
+                <input type="email" id="email" name="email" maxlength="100">
+                <p class="message" id="email_msg"></p>
+            </div>
+
+            <!-- 휴대폰 번호 -->
+            <div class="form-group">
+                <label for="phone">휴대폰 번호</label>
+                <input type="tel" id="phone" name="phone" maxlength="13" placeholder="010-1234-5678">
+                <p class="message" id="phone_msg"></p>
+            </div>
+
+            <!-- 주소 -->
+            <div class="form-group">
+                <label for="address">주소</label>
+                <input type="text" id="address" name="address" maxlength="255">
+            </div>
+
+            <div class="btn-group">
+                <a href="mypage.html" class="btn btn-outline">취소</a>
+                <button type="submit" class="btn btn-primary">저장</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('editForm');
+        const $ = (id) => document.getElementById(id);
+
+        // TODO: 서버 연동 시 API 응답으로 교체 (member.sql 2번 SELECT 결과)
+        const member = {
+            login_id: 'hong123',
+            name: '홍길동',
+            email: 'hong@example.com',
+            phone: '010-1234-5678',
+            birth_date: '1995-03-15',
+            address: '서울특별시 강남구 테헤란로 1'
+        };
+
+        // 기존 정보 채우기
+        Object.keys(member).forEach((key) => {
+            if ($(key)) $(key).value = member[key];
+        });
+
+        const rules = {
+            name: /^[가-힣a-zA-Z\s]{2,50}$/,
+            email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            phone: /^01[016789]-\d{3,4}-\d{4}$/
+        };
+
+        function setMessage(id, text, type) {
+            const msg = $(id + '_msg');
+            msg.textContent = text;
+            msg.className = 'message' + (type ? ' ' + type : '');
+            $(id).classList.toggle('invalid', type === 'error');
+        }
+
+        function validateName() {
+            const value = $('name').value.trim();
+            if (!value) return setMessage('name', '이름을 입력해 주세요.', 'error'), false;
+            if (!rules.name.test(value)) return setMessage('name', '한글 또는 영문 2자 이상 입력해 주세요.', 'error'), false;
+            setMessage('name', '', '');
+            return true;
+        }
+
+        function validateEmail() {
+            const value = $('email').value.trim();
+            if (!value) return setMessage('email', '이메일을 입력해 주세요.', 'error'), false;
+            if (!rules.email.test(value)) return setMessage('email', '올바른 이메일 형식이 아닙니다.', 'error'), false;
+            setMessage('email', '', '');
+            return true;
+        }
+
+        function validatePhone() {
+            const value = $('phone').value.trim();
+            if (value && !rules.phone.test(value)) return setMessage('phone', '010-1234-5678 형식으로 입력해 주세요.', 'error'), false;
+            setMessage('phone', '', '');
+            return true;
+        }
+
+        // 휴대폰 번호 자동 하이픈
+        $('phone').addEventListener('input', (e) => {
+            const digits = e.target.value.replace(/\D/g, '').slice(0, 11);
+            e.target.value = digits.length < 4 ? digits
+                : digits.length < 8 ? `${digits.slice(0, 3)}-${digits.slice(3)}`
+                : `${digits.slice(0, 3)}-${digits.slice(3, digits.length - 4)}-${digits.slice(-4)}`;
+        });
+
+        $('name').addEventListener('blur', validateName);
+        $('email').addEventListener('blur', validateEmail);
+        $('phone').addEventListener('blur', validatePhone);
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const results = [validateName(), validateEmail(), validatePhone()];
+            if (!results.every(Boolean)) {
+                const firstError = form.querySelector('.invalid');
+                if (firstError) firstError.focus();
+                return;
+            }
+
+            const changed = ['name', 'email', 'phone', 'address']
+                .some((key) => $(key).value.trim() !== (member[key] || ''));
+            if (!changed) {
+                alert('변경된 내용이 없습니다.');
+                return;
+            }
+
+            // TODO: 서버 연동 시 form.submit() 으로 변경
+            alert('회원 정보가 수정되었습니다.');
+            location.href = 'mypage.html';
+        });
+    </script>
+</body>
+</html>
